@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mother's Love Quiz</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins :wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to right bottom, #ffebee, #f8bbd0);
+      min-height: 100vh;
+      color: #333;
+      text-align: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .floating-heart, .floating-flower {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      background-size: cover;
+      z-index: 0;
+      opacity: 0.6;
+      animation: floatUp 12s infinite ease-in-out;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(100vh) scale(1); opacity: 0.6; }
+      50% { opacity: 1; }
+      100% { transform: translateY(-100px) scale(1.2); opacity: 0; }
+    }
+
+    .container {
+      max-width: 500px;
+      margin: auto;
+      padding: 40px 20px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 25px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      margin-top: 60px;
+      position: relative;
+      z-index: 2;
+      backdrop-filter: blur(10px);
+    }
+
+    h1 {
+      color: #e91e63;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+
+    .question {
+      display: none;
+      animation: fadeInUp 0.5s ease-in-out forwards;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    p {
+      font-size: 1.1em;
+      margin-bottom: 20px;
+    }
+
+    .rating-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    .rating-buttons button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 30px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .rating-buttons button:hover {
+      background-color: #c2185b;
+      transform: scale(1.1);
+    }
+
+    .lang-toggle {
+      margin-bottom: 20px;
+    }
+
+    .lang-toggle button {
+      margin: 5px;
+      padding: 10px 20px;
+      background: #f8bbd0;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .lang-toggle button.active {
+      background-color: #e91e63;
+      color: white;
+    }
+
+    .result {
+      font-size: 1.2em;
+      margin-top: 20px;
+    }
+
+    .restart-btn {
+      margin-top: 20px;
+      display: block;
+    }
+
+    .restart-btn button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .restart-btn button:hover {
+      background-color: #c2185b;
+      transform: scale(1.05);
+    }
+
+    .surprise {
+      animation: popIn 0.5s ease;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.5); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+  footer {
+      background-color: #f1f1f1;
+      padding: 20px;
+      text-align: center;
+      font-family: Arial, sans-serif;
+      color: #333;
+      border-top: 1px solid #ccc;
+      margin-top: 40px;
+      font-size: 14px;
+    }
+    .footer-links {
+      margin-top: 10px;
+    }
+    .footer-links a {
+      color: #0056a3;
+      text-decoration: none;
+      margin: 0 10px;
+    }
+    .footer-links a:hover {
+      text-decoration: underline;
+    }
+
+    .logo {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  font-size: 12PX;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+
+}
+
+.logo span {
+  font-size: 24px;
+  font-weight: bold;
+  color: #dd0303;
+  animation: color-change 2s infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes color-change {
+  0% {
+    color: #f01703;
+  }
+  50% {
+    color: #3b1af8;
+  }
+  100% {
+    color: #151212;
+  }
+}
+
+  body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      font-family: Arial, sans-serif;
+    }
+
+    main {
+      flex: 1; /* Takes remaining space between header and footer */
+    }
+
+    footer {
+      background-color: #f1f1f1;
+      padding: 5px;
+      text-align: center;
+      color: #333;
+      border-top: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+  </style>
+</head>
+<body>
+
+<!-- Background Animation Elements -->
+<script>
+  function createFloatingElements() {
+    const heart = document.createElement("div");
+    heart.classList.add("floating-heart");
+    heart.style.backgroundImage = "url('https://cdn-icons-png.flaticon.com/512/1163/1163661.png ')";
+    heart.style.left = Math.random() * 100 + "%";
+    heart.style.animationDuration = (Math.random() * 5 + 7) + "s";
+    heart.style.top = -Math.random() * 100 + "px";
+    heart.style.opacity = Math.random();
+    document.body.appendChild(heart);
+
+    setTimeout(() => heart.remove(), 12000);
+    requestAnimationFrame(createFloatingElements);
+  }
+
+  window.onload = () => {
+    createFloatingElements();
+    initQuiz();
+  };
+</script>
+
+<!-- Main Content -->
+<div class="container">
+  <h1>💖 Mom's Love 💖</h1>
+
+  <div class="logo">
+    <span>LIYANOVATE</span>
+  </div>
+
+  <!-- Language Toggle -->
+  <div class="lang-toggle">
+    <button onclick="setLanguage('en')" id="btn-en">English</button>
+    <button onclick="setLanguage('si')" id="btn-si">සිංහල</button>
+  </div>
+
+  <!-- Question Container -->
+  <div id="quizContainer"></div>
+
+  
+
+  <!-- Result Box -->
+  <div class="result" id="resultBox" style="display:none;">
+    <p>Your Mom's Love Score: <strong id="scorePercent">0%</strong></p>
+    <p id="loveMessage"></p>
+    <div class="restart-btn">
+      <button onclick="resetQuiz()">🔁 Restart Quiz</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const fullQuestions = {
+    en: [
+      "Does your mom understand how you feel?",
+"Do you tell your mom when you're sad?",
+"Does your mom hug you when you need it?",
+"Do you like spending time with your mom?",
+"Do you and your mom have fun together?",
+"Can your mom tell when you don't feel well?",
+"Do you share your secrets with your mom?",
+"Is your mom proud when you do something good?",
+"Do you and your mom make up quickly after arguments?",
+"Does your mom listen to you when you're upset?",
+"Do you go to your mom first when you have a problem?",
+"Does your mom know what you like and don't like?",
+"Does your mom make you laugh?",
+"Does your mom help you feel better when you're scared?",
+"Do you and your mom have special ways to talk to each other?",
+"Does your mom show you she loves you?",
+"Does your mom know how to make you feel better?",
+"Do you think your mom thinks about you during the day?",
+"Do you like to show your mom when you do something well?",
+"Does your mom know how you will act in different situations?",
+"Do you trust your mom?",
+"Does your mom know you better than other people do?",
+"Do you miss your mom when you are apart?",
+"Does your mom make special days feel important?",
+"Can your mom tell how you're feeling?",
+"Does your mom know how to cheer you up?",
+"Do you act differently with your mom than with other people?",
+"Does your mom talk about your future?",
+"Do you like to tell your mom about your day?",
+"Do you feel safe with your mom?",
+"Do you and your mom have special routines together?",
+"Does your mom take good care of you?",
+"Do you like to sit close to your mom?",
+"Can your mom tell what you're feeling by looking at you?",
+"Do you feel connected to your mom?",
+"Do you think your mom thinks about you when you're not together?",
+"Do you want your mom when you're upset?",
+"Do you want to be like your mom when you grow up?",
+"Do you and your mom talk about important things?",
+"Does your mom keep you safe?",
+"Do you get excited when your mom comes home?",
+"Does your mom understand what you need?",
+"Do you and your mom like the same things?",
+"Do you and your mom spend time just the two of you?",
+"Do you ask your mom for help with problems?",
+"Does your mom know when you're not telling the truth?",
+"Can other people see that you and your mom are close?",
+"Does your mom make time for you?",
+"Are you proud that she's your mom?"
+     
+    ],
+    si: [
+      "ඔබේ අම්මා ඔබට දැනෙන දේ තේරුම් ගන්නවාද?",
+"ඔබ දුකින් සිටින විට ඔබේ අම්මාට කියනවාද?",
+"ඔබට අවශ්‍ය විට ඔබේ අම්මා ඔබව තුරුලු කර ගන්නවාද?",
+"ඔබ ඔබේ අම්මා සමඟ කාලය ගත කිරීමට කැමතිද?",
+"ඔබේ අම්මා සහ ඔබ එකට විනෝද වෙනවාද?",
+"ඔබ අසනීප විට ඔබේ අම්මාට දැනගත හැකිද?",
+"ඔබ ඔබේ රහස් ඔබේ අම්මාට කියනවාද?",
+"ඔබ හොඳ දෙයක් කරන විට ඔබේ අම්මා ආඩම්බර වෙනවාද?",
+"ඔබේ අම්මා සහ ඔබ තරහ වූ පසු ඉක්මනින් සමාදාන වෙනවාද?",
+"ඔබ කනස්සල්ලෙන් සිටින විට ඔබේ අම්මා ඔබට සවන් දෙනවාද?",
+"ඔබට ප්‍රශ්නයක් ඇති විට ඔබ පළමුව ඔබේ අම්මා වෙත යනවාද?",
+"ඔබට කැමති සහ අකමැති දේ ඔබේ අම්මා දන්නවාද?",
+"ඔබේ අම්මා ඔබව හිනස්සනවාද?",
+"ඔබ බය වී සිටින විට ඔබේ අම්මා ඔබට හොඳින් දැනෙන්න උදව් කරනවාද?",
+"ඔබේ අම්මා සහ ඔබට එකිනෙකා සමඟ කතා කිරීමට විශේෂ ක්‍රම තිබේද?",
+"ඔබේ අම්මා ඔබට ආදරය කරන බව පෙන්වනවාද?",
+"ඔබේ අම්මා ඔබට වඩා හොඳින් දැනෙන්නේ කෙසේද යන්න දන්නවාද?",
+"දවස පුරා ඔබේ අම්මා ඔබ ගැන සිතනවා යැයි ඔබ සිතනවාද?",
+"ඔබ යමක් හොඳින් කරන විට ඔබේ අම්මාට පෙන්වන්න ඔබ කැමතිද?",
+"විවිධ අවස්ථාවලදී ඔබ කටයුතු කරන ආකාරය ඔබේ අම්මා දන්නවාද?",
+"ඔබ ඔබේ අම්මා විශ්වාස කරනවාද?",
+"වෙනත් අයට වඩා ඔබේ අම්මා ඔබව හොඳින් දන්නවාද?",
+"ඔබ සහ ඔබේ අම්මා වෙන් වූ විට ඔබ ඔබේ අම්මාව මතක් කරනවාද?",
+"ඔබේ අම්මා විශේෂ දවස් වැදගත් ලෙස දැනෙන්න සලස්වනවාද?",
+"ඔබේ අම්මාට ඔබට දැනෙන හැටි කිව හැකිද?",
+"ඔබේ අම්මා ඔබව සතුටු කරන්නේ කෙසේද යන්න දන්නවාද?",
+"ඔබ වෙනත් අය සමඟ මෙන් නොව ඔබේ අම්මා සමඟ වෙනස් විදිහට හැසිරෙනවාද?",
+"ඔබේ අම්මා ඔබේ අනාගතය ගැන කතා කරනවාද?",
+"ඔබ ඔබේ දවස ගැන ඔබේ අම්මාට කියන්න කැමතිද?",
+"ඔබ ඔබේ අම්මා සමඟ ආරක්ෂිත බව දැනෙනවාද?",
+"ඔබේ අම්මා සහ ඔබට විශේෂ චාරිත්‍ර තිබේද?",
+"ඔබේ අම්මා ඔබව හොඳින් රැකබලා ගන්නවාද?",
+"ඔබ ඔබේ අම්මාට ළඟින් වාඩි වීමට කැමතිද?",
+"ඔබේ අම්මාට ඔබ දෙස බැලීමෙන් ඔබට දැනෙන දේ කිව හැකිද?",
+"ඔබ ඔබේ අම්මා සමඟ සම්බන්ධ බව දැනෙනවාද?",
+"ඔබ එකට නොසිටින විට ඔබේ අම්මා ඔබ ගැන සිතනවා යැයි ඔබ සිතනවාද?",
+"ඔබ කනස්සල්ලෙන් සිටින විට ඔබේ අම්මාව අවශ්‍ය වෙනවාද?",
+"ඔබ ලොකු වූ විට ඔබේ අම්මා වගේ වෙන්න කැමතිද?",
+"ඔබේ අම්මා සහ ඔබ වැදගත් දේවල් ගැන කතා කරනවාද?",
+"ඔබේ අම්මා ඔබව ආරක්ෂා කරනවාද?",
+"ඔබේ අම්මා ගෙදර එන විට ඔබ සතුටු වෙනවාද?",
+"ඔබට අවශ්‍ය දේ ඔබේ අම්මා තේරුම් ගන්නවාද?",
+"ඔබේ අම්මා සහ ඔබ එකම දේවල් කැමතිද?",
+"ඔබේ අම්මා සහ ඔබ දෙදෙනාම පමණක් කාලය ගත කරනවාද?",
+"ඔබ ප්‍රශ්නවලට උදව් සඳහා ඔබේ අම්මාගෙන් අහනවාද?",
+"ඔබ ඇත්ත නොකියන විට ඔබේ අම්මා දන්නවාද?",
+"ඔබේ අම්මා සහ ඔබ සමීප බව වෙනත් අයට පෙනේද?",
+"ඔබේ අම්මා ඔබට කාලය වෙන් කරනවාද?",
+"ඇය ඔබේ අම්මා වීම ගැන ඔබ ආඩම්බර වෙනවාද?",
+"ඔබේ අම්මා ඔබට ඉගෙන ගන්න සහ වැඩෙන්න උදව් කරනවාද?"
+  
+    ]
+  };
+
+  let currentLang = 'en';
+  let selectedQuestions = [];
+  let currentQuestionIndex = 0;
+  let score = 0;
+
+  function setLanguage(lang) {
+    currentLang = lang;
+    updateLangButton();
+    resetQuiz();
+  }
+
+  function updateLangButton() {
+    document.getElementById("btn-en").classList.remove("active");
+    document.getElementById("btn-si").classList.remove("active");
+    document.getElementById("btn-" + currentLang).classList.add("active");
+  }
+
+  function getRandomQuestions(arr, n) {
+    return [...arr].sort(() => 0.5 - Math.random()).slice(0, n);
+  }
+
+  function resetQuiz() {
+    document.getElementById("quizContainer").innerHTML = "";
+    document.getElementById("resultBox").style.display = "none";
+
+    selectedQuestions = getRandomQuestions(fullQuestions[currentLang], 10);
+    currentQuestionIndex = 0;
+    score = 0;
+    showNextQuestion();
+  }
+
+  function showNextQuestion() {
+    if (currentQuestionIndex >= selectedQuestions.length) {
+      showResult();
+      return;
+    }
+
+    const container = document.getElementById("quizContainer");
+    container.innerHTML = "";
+
+    const questionDiv = document.createElement("div");
+    questionDiv.className = "question";
+    questionDiv.style.display = "block";
+
+    const qText = document.createElement("p");
+    qText.textContent = `${currentQuestionIndex + 1}. ${selectedQuestions[currentQuestionIndex]}`;
+    questionDiv.appendChild(qText);
+
+    const btnContainer = document.createElement("div");
+    btnContainer.className = "rating-buttons";
+
+    for (let i = 1; i <= 5; i++) {
+      const btn = document.createElement("button");
+      btn.textContent = "❤".repeat(i);
+      btn.onclick = () => {
+        score += i;
+        currentQuestionIndex++;
+        showNextQuestion();
+      };
+      btnContainer.appendChild(btn);
+    }
+
+    questionDiv.appendChild(btnContainer);
+    container.appendChild(questionDiv);
+  }
+
+  function showResult() {
+    const percent = Math.round((score / 50) * 100);
+    const scoreText = document.getElementById("scorePercent");
+    const msgText = document.getElementById("loveMessage");
+    const resultBox = document.getElementById("resultBox");
+
+    scoreText.textContent = percent + "%";
+    let message = "";
+
+    if (percent > 90) {
+      message = "🌟 Your mom loves you endlessly!";
+      launchConfetti();
+    } else if (percent > 70) {
+      message = "💖 You share a deep bond.";
+    } else if (percent > 50) {
+      message = "🥰 Your mom cares deeply about you.";
+    } else {
+      message = "💞 There’s room to grow – tell her how you feel!";
+    }
+
+    if (currentLang === 'si') {
+      if (percent > 90) {
+        message = "🌟 ඔබගේ අම්මා ඔබව ගොඩාක්ම ආදරෙයි — ඒ ආදරය සීමාවක් නැත!";
+        launchConfetti();
+      } else if (percent > 70) {
+        message = "💖 ඔබ හා ඔබගේ අම්මා අතර ගැඹුරු සම්බන්ධතාවයක් පවතී.";
+      } else if (percent > 50) {
+        message = "🥰 ඔබගේ අම්මා ඔබ ගැන සැලකිලිමත්ය සහ නිතරම ඔබ ගැන සිතන්නාය.";
+      } else {
+        message = "💞 තවදුරටත් ආදරය වර්ධනය කර ගත හැක – ඔබේ හැඟීම් අම්මාට ප්‍රකාශ කරන්න.";
+      }
+    }
+
+    msgText.textContent = message;
+    document.getElementById("resultBox").style.display = "block";
+  }
+
+  function launchConfetti() {
+    for (let i = 0; i < 100; i++) {
+      const confetti = document.createElement("div");
+      confetti.style.position = "fixed";
+      confetti.style.left = Math.random() * 100 + "vw";
+      confetti.style.top = "-50px";
+      confetti.style.width = confetti.style.height = Math.random() * 10 + 5 + "px";
+      confetti.style.borderRadius = "50%";
+      confetti.style.backgroundColor = ["red", "pink", "orange", "yellow", "green", "blue", "purple"][Math.floor(Math.random() * 6)];
+      confetti.style.zIndex = "9999";
+      document.body.appendChild(confetti);
+
+      const fallTime = Math.random() * 3 + 2;
+      confetti.animate([
+        { transform: `translateY(-50px) rotate(0deg)`, opacity: 1 },
+        { transform: `translateY(${window.innerHeight}px) rotate(${Math.random() * 360}deg)`, opacity: 0 }
+      ], {
+        duration: fallTime * 1000,
+        easing: "linear"
+      });
+
+      setTimeout(() => confetti.remove(), fallTime * 1000);
+    }
+  }
+
+  function initQuiz() {
+    updateLangButton();
+    resetQuiz();
+  }
+</script>
+
+  <footer>
+    <p>&copy; 2025 LIYANOVATE. All rights reserved.</p>
+  </footer>
+  
+
+</body>
+</html>
